@@ -1,9 +1,6 @@
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.SelenideElement;
 import org.junit.Test;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.open;
 
@@ -13,41 +10,34 @@ import static com.codeborne.selenide.Selenide.open;
 public class LiteCartTest extends TestBase {
 
     @Test
-    public void TestTask1() throws InterruptedException {
-       appearance();
-       catalog();
-       countries();
-       currencies();
-       customers();
-       geoZones();
-       languages();
-       modules();
-       orders();
-       pages();
-       reports();
-       setings();
-       slides();
-       tax();
-       translation();
-       users();
-       vqmods();
+    public void testAdminMenu() throws InterruptedException {
+        testAdminLoginAndAdminMenu();
     }
 
     @Test
-    public void TestTask2 () {
-        System.setProperty("selenide.browser", "Chrome");
-        open("http://litecart-2.0.1/");
-        //$(By.cssSelector("#box-campaign-products a")).pressEnter().shouldHave(text("Yellow Duck"));
-        $(By.cssSelector("[title*='Yellow Duck']")).pressEnter().shouldHave(text("Yellow Duck"));
-        $(By.cssSelector("[class*=campaign-price]")).shouldHave(text("18"));
-
+    public void testSizeAndPrice () throws InterruptedException {
+        testYelowDuckForSizeAndPrice();
     }
 
     @Test
-    public void TestTask3 (){
+    public void testNewCustomerCreation () throws InterruptedException {
         newCustomerCreation();
     }
-
-
-
+    @Test
+    public void testWaiteSelenideYellowDuckCart () throws InterruptedException {
+        System.setProperty("selenide.browser", "Chrome");
+        open("http://litecart-2.0.1/");
+        //находим желтую утку и кликаем на нее, проверка по тексту Yellow Duck.
+        $(By.cssSelector("[title*='Yellow Duck']")).pressEnter();
+//        // ajax не подтягивает данные со страницы, по этому указываем на drop-menu размеров желаемой утки,
+//        // и перемещаемся клавишей ARROW_DOWN.
+//        $(By.cssSelector("#box-product select")).sendKeys(Keys.ARROW_DOWN,Keys.ENTER);
+//        // и кликаем на нужный размер.
+//        $(By.cssSelector("#box-product option:nth-child(2)")).shouldHave(value("Small")).click();
+//        $(By.cssSelector("[name='add_cart_product']")).pressEnter();
+//        $(By.cssSelector("[aria-label='Close']")).pressEnter();
+//        $(By.cssSelector("#cart")).click();
+        $(By.xpath("//*[@id='box-product']/div[1]/div[1]/div/a/img")).click();
+        $(By.cssSelector("[aria-label='Close']")).click();
+    }
 }

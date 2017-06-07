@@ -1,10 +1,16 @@
 import org.junit.After;
 import org.junit.Before;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.open;
+
 /**
  * Created by User on 6/1/2017.
  */
@@ -17,7 +23,6 @@ public class TestBase {
     public void start() {
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, 50);
-        login("admin");
     }
 
     @After
@@ -25,9 +30,9 @@ public class TestBase {
        driver.quit();
     }
 
-    public void login(String admin) {
+    public void login(){
         driver.get("http://litecart-2.0.1/admin/");
-        driver.findElement(By.cssSelector("[name=username]")).sendKeys(admin);
+        driver.findElement(By.cssSelector("[name=username]")).sendKeys("admin");
         driver.findElement(By.cssSelector("[name=password]")).sendKeys("admin");
         driver.findElement(By.cssSelector("#box-login button")).click();
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("a[href*=appearance]")));
@@ -67,7 +72,7 @@ public class TestBase {
         driver.findElement(By.cssSelector("#main > h1"));
     }
 
-    public void setings() {
+    public void settings() {
         driver.findElement(By.cssSelector("a[href*=store_info]")).click();
         driver.findElement(By.cssSelector("#main > h1"));
 
@@ -234,5 +239,50 @@ public class TestBase {
         driver.findElement(By.cssSelector("#box-account-login [data-type='password']")).sendKeys("password");
         driver.findElement(By.cssSelector("#box-account-login [value='Sign In']")).click();
         driver.findElement(By.cssSelector("a[href*=logout]")).click();
+    }
+
+    public void testYelowDuckForSizeAndPrice() {
+        System.setProperty("selenide.browser", "Chrome");
+        open("http://litecart-2.0.1/");
+        //находим желтую утку и кликаем на нее, проверка по тексту Yellow Duck.
+        $(By.cssSelector("[title*='Yellow Duck']")).pressEnter().shouldHave(text("Yellow Duck"));
+        // ajax не подтягивает данные со страницы, по этому указываем на drop-menu размеров желаемой утки,
+        // и перемещаемся клавишей ARROW_DOWN.
+        $(By.cssSelector("#box-product select")).sendKeys(Keys.ARROW_DOWN,Keys.ENTER);
+        // и кликаем на нужный размер.
+        $(By.cssSelector("#box-product option:nth-child(2)")).shouldHave(value("Small")).click();
+        // проверяем поле цены с указанием скидки ($18).
+        $(By.cssSelector("#box-product strong")).shouldBe(visible).shouldHave(text("$18"));
+        // чтобы изменить размер утки повторям предыдущую операцию.
+        $(By.cssSelector("#box-product select")).sendKeys(Keys.ARROW_DOWN,Keys.ENTER);
+        $(By.cssSelector("#box-product option:nth-child(3)")).shouldHave(value("Medium")).click();
+        // проверяем цену на утку разрером Medium - $20.50.
+        $(By.cssSelector("#box-product strong")).shouldBe(visible).shouldHave(text("$20.50"));
+        //чтобы изменить размер утки на размер Large, повторям предыдущую операцию.
+        $(By.cssSelector("#box-product select")).sendKeys(Keys.ARROW_DOWN,Keys.ENTER);
+        $(By.cssSelector("#box-product option:nth-child(4)")).shouldBe(visible).shouldHave(value("Large")).click();
+        // проверяем цену на утку разрером Large - $23.
+        $(By.cssSelector("#box-product strong")).shouldHave(text("$23"));
+    }
+
+    public void testAdminLoginAndAdminMenu() {
+        login();
+        appearance();
+        catalog();
+        countries();
+        currencies();
+        customers();
+        geoZones();
+        languages();
+        modules();
+        orders();
+        pages();
+        reports();
+        settings();
+        slides();
+        tax();
+        translation();
+        users();
+        vqmods();
     }
 }
